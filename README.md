@@ -17,7 +17,7 @@ your laptop: npm run send ──(D1 API, scoped token)────────�
 
 ## Get started
 
-1. Follow [docs/setup.md](docs/setup.md). Or, in Claude Code, run the **`new-setup`** skill, which guides you through each step and checks it.
+1. Follow [docs/setup.md](docs/setup.md). Or, in Claude Code, run the **`/new-setup`** skill, which guides you through each step and checks it.
 2. Embed the widget on your posts: [docs/widget.md](docs/widget.md).
 
 ## Announce a post
