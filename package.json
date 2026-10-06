@@ -1,0 +1,24 @@
+{
+  "name": "follow",
+  "private": true,
+  "description": "Self-hosted email subscribe widget + sender for static blogs, on Cloudflare Workers + D1.",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "shared",
+    "worker",
+    "cli"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w worker",
+    "deploy": "npm run deploy -w worker",
+    "test": "npm test -w shared -w worker -w cli",
+    "typecheck": "tsc -p shared && tsc -p worker && tsc -p cli",
+    "send": "npm run send -w cli --",
+    "export": "npm run export -w cli --",
+    "demo": "node widget/serve-demo.mjs"
+  },
+  "engines": {
+    "node": ">=20.12"
+  }
+}

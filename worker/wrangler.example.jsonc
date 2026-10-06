@@ -1,0 +1,41 @@
+// Copy to wrangler.jsonc (gitignored) and fill in the values marked CHANGE ME.
+// Secrets are NOT set here — use `npx wrangler secret put TURNSTILE_SECRET`.
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "follow",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-15",
+
+  // Serves widget/public/follow.js at https://<your worker>/follow.js
+  "assets": { "directory": "../widget/public" },
+
+  // CHANGE ME: a custom domain on a zone in your Cloudflare account,
+  // e.g. "follow.example.com". Remove this block to use *.workers.dev.
+  // "routes": [{ "pattern": "follow.example.com", "custom_domain": true }],
+
+  "vars": {
+    // Comma-separated list of origins allowed to POST /subscribe.
+    "ALLOWED_ORIGINS": "https://example.com", // CHANGE ME
+    // Shown on the unsubscribe pages.
+    "SITE_NAME": "My Blog", // CHANGE ME
+    "SITE_URL": "https://example.com" // CHANGE ME
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "follow",
+      // CHANGE ME: from `npx wrangler d1 create follow`
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  // Per-IP limit on POST /subscribe. namespace_id is any integer string,
+  // unique per rate limiter within your account.
+  "ratelimits": [
+    { "name": "RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 5, "period": 60 } }
+  ],
+
+  "observability": { "enabled": true }
+}

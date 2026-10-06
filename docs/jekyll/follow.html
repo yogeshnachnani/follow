@@ -1,0 +1,20 @@
+{%- comment -%}
+  Save as _includes/follow.html in your Jekyll site and configure in _config.yml:
+
+    follow:
+      endpoint: https://follow.example.com      # your deployed Worker
+      turnstile_sitekey: 0x4AAAAAAA...           # public site key (not the secret)
+      accent: "#f17bb5"                          # optional
+      heading: "Thanks for reading! Subscribe for free to receive new posts."  # optional
+
+  Disable on a single post with `follow: false` in its front matter.
+{%- endcomment -%}
+{%- if site.follow.endpoint and page.follow != false -%}
+<div data-follow
+     data-endpoint="{{ site.follow.endpoint }}"
+     data-turnstile-sitekey="{{ site.follow.turnstile_sitekey }}"
+     {%- if site.follow.accent %} data-accent="{{ site.follow.accent }}"{% endif %}
+     {%- if site.follow.heading %} data-heading="{{ site.follow.heading | escape }}"{% endif %}
+     {%- if site.follow.button_text %} data-button-text="{{ site.follow.button_text | escape }}"{% endif %}></div>
+<script src="{{ site.follow.endpoint }}/follow.js" defer></script>
+{%- endif -%}

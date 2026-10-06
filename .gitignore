@@ -1,0 +1,7 @@
+node_modules/
+.env
+*.csv
+worker/wrangler.jsonc
+worker/.dev.vars
+.wrangler/
+worker/.wrangler/

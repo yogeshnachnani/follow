@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" data-mode="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>follow.js demo</title>
+  <style>
+    body { font-family: "Source Sans Pro", system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 16px; background: #fff; color: #222; }
+    html[data-mode=dark] body { background: #1b1b1e; color: #ddd; }
+    .controls { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; padding: .75rem; border: 1px dashed #999; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <button id="mode">Toggle dark mode (Chirpy data-mode)</button>
+    <label>Accent <input id="accent" type="color" value="#f17bb5"></label>
+  </div>
+
+  <h1>A blog post</h1>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. This page mimics a post on a Jekyll/Chirpy site.</p>
+
+  <!-- Local dev: the worker runs on :8787 via `npm run dev`, and
+       1x00000000000000000000AA is Cloudflare's always-pass Turnstile site key. -->
+  <div id="follow" data-follow
+       data-endpoint="http://localhost:8787"
+       data-turnstile-sitekey="1x00000000000000000000AA"
+       data-heading="Thanks for reading! Subscribe for free to receive new posts and support my work."></div>
+  <script>
+    // Override the endpoint with ?endpoint=http://localhost:PORT if 8787 is taken.
+    var ep = new URLSearchParams(location.search).get("endpoint");
+    if (ep) document.getElementById("follow").dataset.endpoint = ep;
+  </script>
+  <script src="public/follow.js" defer></script>
+
+  <script>
+    document.getElementById("mode").onclick = function () {
+      var r = document.documentElement;
+      r.dataset.mode = r.dataset.mode === "dark" ? "light" : "dark";
+    };
+    // Page CSS can drive the accent through the --follow-accent custom property.
+    document.getElementById("accent").oninput = function (e) {
+      document.getElementById("follow").style.setProperty("--follow-accent", e.target.value);
+    };
+  </script>
+</body>
+</html>

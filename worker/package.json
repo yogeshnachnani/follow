@@ -1,0 +1,24 @@
+{
+  "name": "@follow/worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "migrate:local": "wrangler d1 migrations apply DB --local",
+    "migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@follow/shared": "*"
+  },
+  "devDependencies": {
+    "wrangler": "^4.147.0",
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "*",
+    "vitest": "^4.1.0",
+    "typescript": "^5.9.0",
+    "@vitest/runner": "^4.1.0",
+    "@vitest/snapshot": "^4.1.0"
+  }
+}
