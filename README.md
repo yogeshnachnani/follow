@@ -35,6 +35,8 @@ You may want a CI secret scanner too (e.g. [gitleaks](https://github.com/gitleak
 
 Requires Node ≥ 20.12 and a Cloudflare account. The domain names below are examples.
 
+In Claude Code, the [`new-setup`](.claude/skills/new-setup/SKILL.md) skill walks you through these steps one at a time. It does the CLI work and checks each step, and asks you to do the dashboard steps. Step 6, embedding the widget, depends on your blog platform; the skill has a worked recipe for Jekyll + Chirpy.
+
 ```sh
 npm install
 cp worker/wrangler.example.jsonc worker/wrangler.jsonc
