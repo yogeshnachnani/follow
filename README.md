@@ -143,6 +143,11 @@ If those ports are taken: `npx wrangler dev --port 8799` (in `worker/`) and `POR
 
 The CLI can use the local database: `D1_LOCAL=1 npm run send -- … --dry-run`.
 
+### End-to-end verification
+`npm run verify:start` starts an isolated local stack: free ports and a throwaway D1, so it never touches your dev data. It runs about 24 checks covering tests, typecheck, HTTP security behaviour and the CLI, and leaves the stack up. `npm run verify:stop` tears it down.
+
+In Claude Code, the [`verify-everything`](.claude/skills/verify-everything/SKILL.md) skill runs the same checks and adds a real-browser pass over the widget using the [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) plugin. If the plugin is missing, it tells you how to install it.
+
 ### Adding another mail provider
 Implement `MailSender` (`shared/src/mail.ts`) and add a case in `cli/src/config.ts#createSender`. Then set `MAIL_PROVIDER` in `.env`.
 

@@ -16,7 +16,9 @@
     "typecheck": "tsc -p shared && tsc -p worker && tsc -p cli",
     "send": "npm run send -w cli --",
     "export": "npm run export -w cli --",
-    "demo": "node widget/serve-demo.mjs"
+    "demo": "node widget/serve-demo.mjs",
+    "verify:start": "node scripts/verify.mjs start",
+    "verify:stop": "node scripts/verify.mjs stop"
   },
   "engines": {
     "node": ">=20.12"
