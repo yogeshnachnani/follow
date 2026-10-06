@@ -1,20 +1,30 @@
 {%- comment -%}
-  Save as _includes/follow.html in your Jekyll site and configure in _config.yml:
+  Subscribe box for Jekyll (tested with jekyll-theme-chirpy 7.x).
 
-    follow:
-      endpoint: https://follow.example.com      # your deployed Worker
-      turnstile_sitekey: 0x4AAAAAAA...           # public site key (not the secret)
-      accent: "#f17bb5"                          # optional
-      heading: "Thanks for reading! Subscribe for free to receive new posts."  # optional
+  1. Save this file as _includes/follow.html.
+  2. Include it from _includes/metadata-hook.html (Chirpy's <head> extension
+     point; create the file if it doesn't exist):
+       {% include follow.html %}
+  3. Configure in _config.yml:
+       follow:
+         endpoint: https://follow.example.com     # your deployed Worker
+         turnstile_sitekey: 0x4AAAAAAA...          # public site key (not the secret)
+         # Optional. Defaults follow the theme's own colors in light + dark mode.
+         # accent: "#f17bb5"
+         # accent_text: "#fff"
+         # heading: "Thanks for reading! Subscribe for free to receive new posts."
+         # mount_after: "article > .content"       # Chirpy's post body
 
-  Disable on a single post with `follow: false` in its front matter.
+  The box is inserted after the post body on post pages only. Hide it on one
+  post with `follow: false` in that post's front matter.
 {%- endcomment -%}
-{%- if site.follow.endpoint and page.follow != false -%}
-<div data-follow
-     data-endpoint="{{ site.follow.endpoint }}"
-     data-turnstile-sitekey="{{ site.follow.turnstile_sitekey }}"
-     {%- if site.follow.accent %} data-accent="{{ site.follow.accent }}"{% endif %}
-     {%- if site.follow.heading %} data-heading="{{ site.follow.heading | escape }}"{% endif %}
-     {%- if site.follow.button_text %} data-button-text="{{ site.follow.button_text | escape }}"{% endif %}></div>
-<script src="{{ site.follow.endpoint }}/follow.js" defer></script>
+{%- if site.follow.endpoint and page.layout == 'post' and page.follow != false -%}
+<script src="{{ site.follow.endpoint }}/follow.js" defer
+  data-mount-after="{{ site.follow.mount_after | default: 'article > .content' }}"
+  data-endpoint="{{ site.follow.endpoint }}"
+  data-turnstile-sitekey="{{ site.follow.turnstile_sitekey }}"
+  data-accent="{{ site.follow.accent | default: 'var(--link-color)' }}"
+  data-accent-text="{{ site.follow.accent_text | default: 'var(--main-bg)' }}"
+  {%- if site.follow.heading %} data-heading="{{ site.follow.heading | escape }}"{% endif %}
+  {%- if site.follow.button_text %} data-button-text="{{ site.follow.button_text | escape }}"{% endif %}></script>
 {%- endif -%}

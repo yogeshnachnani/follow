@@ -86,17 +86,22 @@ Any site:
 |---|---|
 | `data-endpoint` *(required)* | — |
 | `data-turnstile-sitekey` *(required)* | — |
-| `data-accent` | `#f17bb5` (or CSS `--follow-accent`) |
+| `data-accent` / `data-accent-text` | `#f17bb5` / `#fff` (or CSS `--follow-accent` / `--follow-accent-text`); accepts `var(--…)` |
+| `data-mount-after` *(on the script tag)* | — (see script-only embedding below) |
 | `data-heading` | "Thanks for reading! Subscribe for free to receive new posts." |
 | `data-placeholder` / `data-button-text` / `data-success-text` | "Type your email..." / "Subscribe" / "Thanks! You're subscribed." |
 | `data-theme` | `auto` (follows `<html data-mode>` as used by Chirpy, `<html data-theme>`, then the OS setting) |
 
 Colors can also be set from page CSS: `--follow-accent`, `--follow-accent-text`, `--follow-text`, `--follow-input-bg`, `--follow-input-text`.
 
+**Script-only embedding.** Put the `data-*` attributes on the `<script>` tag and add `data-mount-after="<CSS selector>"`. The box is then inserted right after the first matching element. Use this when you can add to `<head>` but can't easily edit the post template. `data-accent` and `data-accent-text` also accept `var(--your-theme-variable)`, so the box can follow your theme's light and dark colors.
+
 **Jekyll / Chirpy:**
 1. Copy [`docs/jekyll/follow.html`](docs/jekyll/follow.html) to your site's `_includes/`.
-2. Add the `follow:` block shown in that file to `_config.yml`.
-3. Copy the theme's post layout into your site: `cp "$(bundle info --path jekyll-theme-chirpy)/_layouts/post.html" _layouts/`. Then add `{% include follow.html %}` right after the post content.
+2. Add `{% include follow.html %}` to `_includes/metadata-hook.html`, which is Chirpy's `<head>` extension point. Create the file if it doesn't exist.
+3. Add a `follow:` block with `endpoint` and `turnstile_sitekey` to `_config.yml`.
+
+The box then appears after the post body on post pages, in Chirpy's link color for both light and dark mode. You don't need to copy any theme layout.
 
 If your site sends a Content-Security-Policy, allow `script-src https://challenges.cloudflare.com <worker origin>`, `frame-src https://challenges.cloudflare.com` and `connect-src <worker origin>`.
 

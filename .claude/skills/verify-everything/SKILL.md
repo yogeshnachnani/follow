@@ -54,8 +54,9 @@ Use the demo URL from Step 1. Open it with `new_page` using `isolatedContext: "v
    ```
    The widget reacts through a MutationObserver, which runs asynchronously, so read the result in a **separate** `evaluate_script` call:
    `() => document.querySelector("[data-follow]").getAttribute("data-resolved-theme")`. Expected: `"dark"`. Then `resize_page` to 375×700 and `take_screenshot`. Expected: dark input, blue button and border, no horizontal overflow, heading wrapped and readable.
-6. **Console:** `list_console_messages` with types `["error"]`. Expected: no errors from `follow.js`. Turnstile iframe noise is acceptable; mention it if present.
-7. `close_page` the verify tab.
+6. **Script-only mount:** open `<demo origin>/demo-mount.html?endpoint=<worker url, URL-encoded>`. `evaluate_script` → `() => { const h = document.querySelector("[data-follow]"); return [h?.previousElementSibling?.className, h?.nextElementSibling?.className]; }`. Expected: `["content", "post-tail-wrapper"]`. `take_screenshot`: expected a blue (`--link-color`) button with white text. Set `document.documentElement.dataset.mode = "dark"`, take another screenshot, and expect a light-blue button with dark text. Then subscribe `verify-mount@example.com` (same as step 3) and confirm it with `node scripts/verify.mjs subscriber verify-mount@example.com`.
+7. **Console:** `list_console_messages` with types `["error", "warn"]`. Expected: no errors or warnings from `follow.js` or Turnstile. A 404 for `/favicon.ico` from the demo server is fine.
+8. `close_page` the verify tab.
 
 ## Step 3 — Tear down (always, even after failures)
 

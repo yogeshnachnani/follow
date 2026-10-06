@@ -9,7 +9,12 @@
  *   <script src="https://follow.example.com/follow.js" defer></script>
  *
  * Optional attributes: data-heading, data-placeholder, data-button-text,
- * data-success-text, data-theme ("auto" | "light" | "dark").
+ * data-success-text, data-accent-text, data-theme ("auto" | "light" | "dark").
+ *
+ * Script-only embedding: put the data-* attributes on the <script> tag itself
+ * plus data-mount-after="<CSS selector>", and the box is inserted right after
+ * the first matching element. Handy for themes where you can add to <head>
+ * but can't easily edit the post layout.
  * Colors can also be set from page CSS via --follow-accent, --follow-accent-text,
  * --follow-text, --follow-input-bg, --follow-input-text.
  */
@@ -49,6 +54,9 @@
     ".status{min-height:1.5em;margin:.6rem 0 0;font-size:.95em;color:var(--_muted)}" +
     ".status.err{color:#d33}.done{font-weight:600}" +
     "::slotted(*){display:flex;justify-content:center;margin-top:.75rem}";
+
+  // Captured at load time; null once scripts finish executing.
+  var currentScript = document.currentScript;
 
   var turnstileReady = null;
   function loadTurnstile() {
@@ -96,8 +104,12 @@
       console.error("[follow] data-endpoint and data-turnstile-sitekey are required", host);
       return;
     }
+    // Values may be colors or var(--page-variable) references.
     if (d.accent && window.CSS && CSS.supports("color", d.accent)) {
       host.style.setProperty("--follow-accent", d.accent);
+    }
+    if (d.accentText && window.CSS && CSS.supports("color", d.accentText)) {
+      host.style.setProperty("--follow-accent-text", d.accentText);
     }
 
     var applyTheme = function () {
@@ -152,6 +164,7 @@
     host.appendChild(tsBox);
 
     var widgetId = null;
+    var tsApi = null;
     var pending = null; // {resolve, reject} for the in-flight execute()
 
     function setStatus(msg, isError) {
@@ -164,6 +177,7 @@
     }
 
     function getToken(ts) {
+      tsApi = ts;
       return new Promise(function (resolve, reject) {
         pending = { resolve: resolve, reject: reject };
         if (widgetId === null) {
@@ -219,6 +233,7 @@
         })
         .then(function (body) {
           if (!body.ok) throw new Error(body.error || "default");
+          if (tsApi && widgetId !== null) tsApi.remove(widgetId);
           form.remove();
           tsBox.remove();
           setStatus("");
@@ -235,7 +250,25 @@
     loadTurnstile().catch(function () {});
   }
 
+  function mountFromScript() {
+    var selector = currentScript && currentScript.getAttribute("data-mount-after");
+    if (!selector || document.querySelector("[data-follow]")) return;
+    var target = document.querySelector(selector);
+    if (!target) {
+      console.warn("[follow] data-mount-after matched nothing:", selector);
+      return;
+    }
+    var host = document.createElement("div");
+    host.setAttribute("data-follow", "");
+    for (var i = 0; i < currentScript.attributes.length; i++) {
+      var a = currentScript.attributes[i];
+      if (a.name.indexOf("data-") === 0 && a.name !== "data-mount-after") host.setAttribute(a.name, a.value);
+    }
+    target.insertAdjacentElement("afterend", host);
+  }
+
   function init() {
+    mountFromScript();
     var nodes = document.querySelectorAll("[data-follow]");
     for (var i = 0; i < nodes.length; i++) mount(nodes[i]);
   }

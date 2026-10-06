@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>follow.js demo (script-only mount)</title>
+  <style>
+    /* Mimics a theme exposing its colors as CSS variables (Chirpy does). */
+    :root { --link-color: #0056b2; --main-bg: white; }
+    html[data-mode=dark] { --link-color: rgb(138 180 248); --main-bg: rgb(27 27 30); }
+    body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 16px; background: var(--main-bg); color: #222; }
+    html[data-mode=dark] body { color: #ddd; }
+  </style>
+  <script>
+    // ?endpoint=http://localhost:PORT overrides the default Worker URL.
+    var ep = new URLSearchParams(location.search).get("endpoint") || "http://localhost:8787";
+    var s = document.createElement("script");
+    s.src = "public/follow.js";
+    s.defer = true;
+    s.dataset.mountAfter = "article > .content";
+    s.dataset.endpoint = ep;
+    s.dataset.turnstileSitekey = "1x00000000000000000000AA";
+    s.dataset.accent = "var(--link-color)";
+    s.dataset.accentText = "var(--main-bg)";
+    document.head.appendChild(s);
+  </script>
+</head>
+<body>
+  <article>
+    <h1>A post</h1>
+    <div class="content"><p>Post body. The subscribe box should appear right below this paragraph and above the tags.</p></div>
+    <div class="post-tail-wrapper"><p><em>tags: demo</em></p></div>
+  </article>
+</body>
+</html>
