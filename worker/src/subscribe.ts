@@ -48,6 +48,11 @@ export async function handleSubscribe(req: Request, env: Env): Promise<Response>
   const email = normalizeEmail(body.email);
   if (!email) return json({ ok: false, error: "invalid_email" }, 400, cors);
 
+  if (!env.TURNSTILE_SECRET) {
+    // Misconfiguration, not a bot: make it obvious in `wrangler tail`.
+    console.error("TURNSTILE_SECRET is not set; run `wrangler secret put TURNSTILE_SECRET`");
+    return json({ ok: false, error: "server_misconfigured" }, 500, cors);
+  }
   const hostnames = new Set([...origins].map((o) => new URL(o).hostname));
   const human = await verifyTurnstile(String(body.turnstileToken ?? ""), env.TURNSTILE_SECRET, ip, hostnames);
   if (!human) return json({ ok: false, error: "verification_failed" }, 403, cors);

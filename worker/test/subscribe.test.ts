@@ -67,6 +67,20 @@ describe("POST /subscribe", () => {
     expect(await subscriber("robot@example.com")).toBeNull();
   });
 
+  it("reports a missing Turnstile secret as a server error, not a bot", async () => {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    const original = env.TURNSTILE_SECRET;
+    (env as { TURNSTILE_SECRET: string }).TURNSTILE_SECRET = "";
+    try {
+      const res = await call(subscribeReq({ email: "cfg@example.com" }));
+      expect(res.status).toBe(500);
+      expect(await res.json()).toEqual({ ok: false, error: "server_misconfigured" });
+      expect(errors.mock.calls[0]?.[0]).toMatch(/TURNSTILE_SECRET is not set/);
+    } finally {
+      (env as { TURNSTILE_SECRET: string }).TURNSTILE_SECRET = original;
+    }
+  });
+
   it("forwards token, secret and client IP to siteverify", async () => {
     vi.restoreAllMocks();
     const spy = mockTurnstile({ success: true });
