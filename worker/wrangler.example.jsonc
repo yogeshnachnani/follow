@@ -9,6 +9,11 @@
   // Serves widget/public/follow.js at https://<your worker>/follow.js
   "assets": { "directory": "../widget/public" },
 
+  // Serve only on the custom domain below. A *.workers.dev URL (or per-version
+  // preview URLs) would bypass any WAF rules on your own zone.
+  "workers_dev": false,
+  "preview_urls": false,
+
   // CHANGE ME: a custom domain on a zone in your Cloudflare account,
   // e.g. "follow.example.com". Remove this block to use *.workers.dev.
   // "routes": [{ "pattern": "follow.example.com", "custom_domain": true }],
