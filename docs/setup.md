@@ -32,7 +32,7 @@ In `wrangler.jsonc`, set:
 
 Then run `npm run deploy`.
 
-**Recommended: block everything else at the edge.** Cloudflare accepts connections for your hostname on all of its [HTTP ports](https://developers.cloudflare.com/fundamentals/reference/network-ports/), not just 443, and scanners probe them. Add a WAF custom rule (dashboard → your domain → Security → WAF → Custom rules; the free plan includes these) with action **Block** and this expression:
+**Recommended: block everything else at the edge.** Cloudflare accepts connections for your hostname on all of its [HTTP ports](https://developers.cloudflare.com/fundamentals/reference/network-ports/), not just 443, and scanners probe them. Add a WAF custom rule (dashboard → your domain → Security → Security rules (older dashboards: Security → WAF) → Custom rules; the Free plan includes 5) with action **Block**. The visual builder doesn't list `cf.edge.server_port`, so click **Edit expression** and paste this:
 
 ```
 (http.host eq "follow.example.com" and (cf.edge.server_port ne 443 or not http.request.uri.path in {"/follow.js" "/subscribe" "/unsubscribe"}))
