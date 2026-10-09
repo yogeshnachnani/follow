@@ -32,6 +32,14 @@ In `wrangler.jsonc`, set:
 
 Then run `npm run deploy`.
 
+**Recommended: block everything else at the edge.** Cloudflare accepts connections for your hostname on all of its [HTTP ports](https://developers.cloudflare.com/fundamentals/reference/network-ports/), not just 443, and scanners probe them. Add a WAF custom rule (dashboard → your domain → Security → WAF → Custom rules; the free plan includes these) with action **Block** and this expression:
+
+```
+(http.host eq "follow.example.com" and (cf.edge.server_port ne 443 or not http.request.uri.path in {"/follow.js" "/subscribe" "/unsubscribe"}))
+```
+
+It runs before the Worker, so junk requests don't invoke it at all. Don't turn on Bot Fight Mode for this hostname: it can't be scoped to a hostname, and it would challenge the server-to-server one-click unsubscribe requests that Gmail and Yahoo send.
+
 ## 4. Email sending (Resend)
 Sending from your own domain, with SPF, DKIM and DMARC set up, is what keeps mail out of spam. Use a subdomain such as `news.example.com`.
 

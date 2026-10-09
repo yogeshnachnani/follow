@@ -75,6 +75,17 @@ Then:
    - `GET /subscribers` → 404
    - `GET /unsubscribe?t=<64 f's>` → 404
 
+5. **Edge allowlist (user):** Cloudflare accepts connections for the hostname on every supported HTTP port (8443, 2053, 8080, …), and scanners probe them. The connection itself can't be refused on shared IPs. Have the user add a WAF custom rule: dashboard → domain → Security → WAF → Custom rules → **Block**, with
+   `(http.host eq "<worker host>" and (cf.edge.server_port ne 443 or not http.request.uri.path in {"/follow.js" "/subscribe" "/unsubscribe"}))`.
+   **Verify:**
+   - `:8443/favicon.ico` → 403
+   - `/favicon.ico` → 403
+   - `/follow.js` → 200
+   - `OPTIONS /subscribe` → 204
+   - `/unsubscribe?t=<64 f's>` → 404 from the Worker, not 403
+
+   Warn against Bot Fight Mode on this zone: it would challenge Gmail/Yahoo one-click unsubscribe POSTs. `wrangler.jsonc` already sets `workers_dev: false` + `preview_urls: false`, so the WAF can't be bypassed.
+
 A real subscribe can't be tested yet, because Turnstile only issues tokens on the blog's hostname. That happens in Step 7.
 
 ## Step 4: Email sending (Resend + DNS)

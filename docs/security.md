@@ -10,6 +10,7 @@
 | Link scanners unsubscribing people | `GET /unsubscribe` only shows a confirmation page; only `POST` changes state (also used by RFC 8058 one-click) |
 | SQL injection, header injection | Parameterized queries only; strict email validation that rejects control characters |
 | Secrets leaking into the repo | Secrets live in `wrangler secret` and a gitignored `.env`; `wrangler.jsonc`, `.dev.vars` and `*.csv` are gitignored |
+| Scanners on other ports/paths (e.g. `:8443/favicon.ico`) | WAF custom rule allowing only port 443 and the three real paths (see [setup](setup.md#3-deploy-the-worker)); `workers_dev` and `preview_urls` are off, so the Worker isn't reachable around the WAF |
 | Misconfiguration hiding as "bot" | A missing `TURNSTILE_SECRET` returns `500 server_misconfigured` and logs a hint, instead of failing verification silently |
 
 **Known gap:** Turnstile doesn't stop a real person typing in *someone else's* address. That person would get your posts until they click unsubscribe. Double opt-in would close this. The schema already has a `pending` status for it, but it isn't implemented yet.
